@@ -10,7 +10,11 @@ function run(urls, options = {}) {
 
 async function fromLog(url, log, options = {}) {
     const replay = new Replay(url, log, options);
-    const stats = await replay.load();
+    const stats = await replay.load()
+          .catch(({err, stats}) => {
+              const har = HAR.create([stats]);
+              throw {err, har};
+          });
     return HAR.create([stats]);
 }
 
